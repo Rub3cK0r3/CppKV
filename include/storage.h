@@ -27,51 +27,16 @@ template<typename V>
 struct KeyValueStore {
     std::vector<KeyValueStoreItem<V>*> bucket;
 
-    // Store constructor: Defines the array size (e.g., 16) and fills each bucket with 'nullptr'
-    KeyValueStore(size_t size = 16) {
-        bucket.resize(size, nullptr);
-    }
+    KeyValueStore(size_t size);
 
     // Basic DJB2 Hash Function to map strings to bucket indices
-    size_t getHashIndex(const std::string& key) {
-        unsigned long hash = 5381;
-        for (char c : key) {
-            hash = ((hash << 5) + hash) + c;
-        }
-        return hash % bucket.size();
-    }
+    size_t getHashIndex(const std::string& key);
 
     // Inserts or updates a key-value pair in low-level memory
-    void put(const std::string& key, V value) {
-        size_t index = getHashIndex(key);
-        KeyValueStoreItem<V>* current = bucket[index];
-
-        while (current != nullptr) {
-            if (current->key == key) {
-                current->value = value;
-                return;
-            }
-            current = current->next;
-        }
-
-        KeyValueStoreItem<V>* newNode = new KeyValueStoreItem<V>(key, value);
-        newNode->next = bucket[index];
-        bucket[index] = newNode;
-    }
+    void put(const std::string& key, V value);
 
     // Retrieves a value by key. Returns nullptr if not found
-    KeyValueStoreItem<V>* get(const std::string& key) {
-        size_t index = getHashIndex(key);
-        KeyValueStoreItem<V>* current = bucket[index];
-
-        while (current != nullptr) {
-            if (current->key == key) {
-                return current;
-            }
-            current = current->next;
-        }
-        return nullptr;
-    }
+    KeyValueStoreItem<V>* get(const std::string& key);
 };
 
 #endif // STORAGE_H
